@@ -24,8 +24,14 @@ access_key_id, access_key_secret = (args.key, args.secret)
 
 def upload_file(bkt, basedir, filename):
     key = filename.split(basedir)[1][1:]
-    print('uploading %s to %s' % (filename, key))
-    bkt.put_object_from_file(key, filename)
+    if bkt.object_exists(key):
+        return
+    print('uploading %s' % (key))
+    try:
+        bkt.put_object_from_file(key, filename)
+    except Exception as e:
+        print('uploading %s to %s to failed ' % (filename, key))
+        print(e.value)
 
 
 if __name__ == "__main__":
